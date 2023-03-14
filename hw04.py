@@ -127,6 +127,13 @@ def balanced(m):
     True
     """
     "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return True
+
+    left, right = end(left(m)), end(right(m))
+    leftWeight = total_weight(left) * length(left(m))
+    rightWeight = total_weight(right) * length(right(m))
+    return balanced(left) and balanced(right) and rightWeight == leftWeight
 
 
 def totals_tree(m):
@@ -158,6 +165,11 @@ def totals_tree(m):
     >>> check(HW_SOURCE_FILE, 'totals_tree', ['Index'])
     True
     """
+    if is_planet(m):
+        return tree(mass(m))
+    
+    branches = [totals_tree(end(x(m))) for x in [left , right]]
+    return tree(sum([label(y) for y in branches]), branches)
     "*** YOUR CODE HERE ***"
 
 
@@ -190,6 +202,11 @@ def replace_loki_at_leaf(t, lokis_replacement):
     >>> laerad == yggdrasil # Make sure original tree is unmodified
     True
     """
+    if is_leaf(t) and label(t) == "loki":
+        return tree(lokis_replacement)
+    
+    repl = [replace_loki_at_leaf(x, lokis_replacement) for x in branches(t)]
+    return tree(label(t), repl)
     "*** YOUR CODE HERE ***"
 
 
@@ -224,6 +241,16 @@ def has_path(t, word):
     False
     """
     assert len(word) > 0, 'no path for empty word.'
+
+    if label(t) != word[0]:
+        return False
+    if len(word) == 1:
+        return True
+    for x in branches(t):
+        if has_path(x, word[1:]):
+            return True
+        
+    return False
     "*** YOUR CODE HERE ***"
 
 
